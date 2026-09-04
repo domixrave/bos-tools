@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="depot112 vermittelt schwer verfügbare Ersatzteile für Feuerwehr- und THW-Fahrzeuge — über ein Netzwerk aus Kfz-Fachhandel und der Blaulichtfamilie. Erfolgsprovision statt Vorkasse.">
+<title>depot112 — Ersatzteile für Feuerwehr- und THW-Fahrzeuge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Markenwelt */
+    --ink:      #1B4258;
+    --ink-deep: #12303F;
+    --steel:    #2E5C78;
+    --mist:     #8FB3C4;
+    /* Signal */
+    --red:      #9C2E24;
+    --red-web:  #C24234;
+    /* Aktion */
+    --signal:      #DFFF3D;
+    --signal-text: #1E2900;
+    /* Flächen */
+    --paper:  #F3F4F3;
+    --surface:#FFFFFF;
+    --line:   #DDE1E2;
+    --line-2: #C9D0D2;
+    --text:   #14181B;
+    --muted:  #5B6469;
+    /* semantisch — werden im Darkmode überschrieben */
+    --heading:    #1B4258;
+    --on-surface: #1B4258;
+    --quote-text: #1B4258;
+
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --num:  'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+
+    --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+    --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+    --s9: 96px; --s10: 128px;
+
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:   #0E1A22;
+      --surface: #14242E;
+      --line:    #243A47;
+      --line-2:  #2E4653;
+      --text:    #E6EDF1;
+      --muted:   #9FB2BD;
+      /* Blau muss auf dunklem Grund heller werden, sonst verschwindet es */
+      --ink:      #14262F;
+      --ink-deep: #0B1720;
+      --heading:    #DCE9F0;
+      --on-surface: #DCE9F0;
+      --quote-text: #E6EDF1;
+      --red: #E4574A;
+
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--paper); color: var(--text);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+
+  .shell { max-width: 1240px; margin: 0 auto; padding: 0 var(--s5); }
+  @media (min-width: 900px) { .shell { padding: 0 var(--s7); } }
+
+  /* ─────────── Wortmarke ─────────── */
+  .wordmark { position: relative; display: inline-flex; align-items: baseline; font-size: 22px; line-height: 1; text-decoration: none; }
+  .wordmark .w { font-weight: 600; color: #EEF2F4; letter-spacing: -0.015em; }
+  .wordmark .n { font-family: var(--num); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--red-web); letter-spacing: 0.03em; }
+  .wordmark .accent { position: absolute; left: 0; bottom: -0.1em; width: 100%; height: 0.1em; background: var(--signal); }
+  .wordmark .accent::after {
+    content: ""; position: absolute; left: 100%; bottom: 0;
+    width: 1.3em; height: 0.1em; background: var(--signal);
+    transform-origin: left bottom; transform: rotate(-55deg);
+  }
+  .wordmark.on-light .w { color: var(--heading); }
+  .wordmark.on-light .n { color: var(--red); }
+
+  /* ─────────── Navigation ─────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50; background: var(--ink-deep);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .nav-in { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .nav-links { display: none; gap: var(--s6); }
+  @media (min-width: 900px) { .nav-links { display: flex; } }
+  .nav-links a {
+    font-size: 13.5px; font-weight: 500; color: #A9C0CD; text-decoration: none;
+    letter-spacing: 0.01em; padding: 4px 0; border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .nav-links a:hover { color: #fff; border-bottom-color: var(--red-web); }
+  .nav-cta {
+    font-size: 13.5px; font-weight: 600; background: var(--signal); color: var(--signal-text);
+    text-decoration: none; padding: 10px 16px; letter-spacing: 0.01em;
+    transition: transform .15s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); }
+
+  /* ─────────── Hero ─────────── */
+  .hero { background: var(--ink); color: #fff; position: relative; overflow: hidden; }
+  .hero-grid { position: relative; display: grid; gap: var(--s7); padding: var(--s8) 0 var(--s7); align-items: center; }
+  @media (min-width: 900px) {
+    .hero-grid { grid-template-columns: 0.95fr 1.05fr; gap: var(--s7); padding: var(--s9) 0; }
+  }
+
+  /* Radar */
+  .radar { position: relative; justify-self: center; width: min(560px, 92vw); aspect-ratio: 1; }
+  @media (min-width: 900px) { .radar { width: 100%; max-width: 600px; } }
+  .radar svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .sweep { transform-origin: 350px 350px; animation: sweep 6s linear infinite; }
+  @keyframes sweep { to { transform: rotate(360deg); } }
+  .blip { animation: blip 6s linear infinite; }
+  @keyframes blip {
+    0%, 24% { opacity: 0.25; r: 4; }
+    28%     { opacity: 1;    r: 8; }
+    46%     { opacity: 0.9;  r: 5; }
+    100%    { opacity: 0.25; r: 4; }
+  }
+  .blip-ring { animation: blipRing 6s linear infinite; transform-origin: 452px 228px; }
+  @keyframes blipRing {
+    0%, 25%  { opacity: 0; transform: scale(0.3); }
+    30%      { opacity: 0.85; transform: scale(1); }
+    48%      { opacity: 0; transform: scale(1.9); }
+    100%     { opacity: 0; transform: scale(1.9); }
+  }
+
+  .hero-copy { position: relative; }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: var(--s3);
+    font-family: var(--num); font-size: 14px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--mist); margin-bottom: var(--s5);
+  }
+  .kicker::before { content: ""; width: 26px; height: 2px; background: var(--red-web); }
+
+  .hero h1 {
+    font-size: clamp(38px, 7.5vw, 76px); font-weight: 600; letter-spacing: -0.025em;
+    line-height: 1.02; margin: 0 0 var(--s5); max-width: 15ch;
+  }
+  .hero h1 em { font-style: normal; color: var(--mist); }
+  .hero .sub { font-size: clamp(16px, 2.1vw, 19px); color: #A9C0CD; max-width: 46ch; margin: 0 0 var(--s7); }
+
+  .hero-actions { display: flex; flex-wrap: wrap; gap: var(--s3); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: var(--s2); text-decoration: none;
+    font-size: 15px; font-weight: 600; padding: 15px 24px; letter-spacing: 0.005em;
+    border: 1px solid transparent; transition: transform .15s, background .15s, border-color .15s;
+  }
+  .btn-primary { background: var(--signal); color: var(--signal-text); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-ghost { border-color: rgba(255,255,255,0.32); color: #fff; }
+  .btn-ghost:hover { border-color: #fff; }
+  .btn-dark { background: var(--ink); color: #fff; }
+  .btn-dark:hover { transform: translateY(-2px); }
+  .btn-line { border-color: var(--on-surface); color: var(--on-surface); }
+  .btn-line:hover { background: var(--on-surface); color: var(--paper); }
+
+  /* Kontextleiste */
+  .context { background: var(--ink-deep); color: #fff; }
+  .context-grid { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 700px) { .context-grid { grid-template-columns: repeat(3, 1fr); } }
+  .ctx {
+    padding: var(--s5) 0; border-top: 1px solid rgba(255,255,255,0.11);
+  }
+  @media (min-width: 700px) {
+    .ctx { padding: var(--s6) var(--s5) var(--s6) 0; border-top: none; border-right: 1px solid rgba(255,255,255,0.11); }
+    .ctx:last-child { border-right: none; }
+  }
+  .ctx .v { font-family: var(--num); font-size: 40px; font-weight: 700; line-height: 1; letter-spacing: 0.01em; }
+  .ctx .k { font-size: 13.5px; color: #93AAB8; margin-top: var(--s2); max-width: 24ch; }
+
+  /* ─────────── Sektionen ─────────── */
+  .sec { padding: var(--s9) 0; border-bottom: 1px solid var(--line); }
+  @media (max-width: 700px) { .sec { padding: var(--s8) 0; } }
+  .sec:last-of-type { border-bottom: none; }
+
+  .sec-head { display: flex; gap: var(--s5); align-items: baseline; margin-bottom: var(--s7); }
+  .sec-num {
+    font-family: var(--num); font-size: 15px; font-weight: 700; color: var(--red);
+    letter-spacing: 0.08em; flex-shrink: 0; padding-top: 6px;
+  }
+  .sec-head h2 {
+    font-size: clamp(26px, 4vw, 42px); font-weight: 600; letter-spacing: -0.02em;
+    line-height: 1.1; margin: 0; color: var(--heading);
+  }
+  .sec-head .lede { font-size: 17px; color: var(--muted); margin: var(--s3) 0 0; max-width: 52ch; }
+
+  .split { display: grid; gap: var(--s7); }
+  @media (min-width: 900px) { .split { grid-template-columns: 5fr 7fr; gap: var(--s9); } }
+
+  /* Problem */
+  .prob p { font-size: 17px; max-width: 56ch; margin: 0 0 var(--s4); }
+  .prob .claim {
+    font-size: 20px; font-weight: 600; letter-spacing: -0.015em; color: var(--heading);
+    margin: var(--s5) 0 0; padding-left: var(--s4); border-left: 3px solid var(--signal);
+  }
+
+  /* Fallbeispiel */
+  .case { margin-top: var(--s7); border: 1px solid var(--line); background: var(--surface); }
+  .case-head {
+    display: flex; flex-wrap: wrap; gap: var(--s3); justify-content: space-between; align-items: baseline;
+    padding: var(--s3) var(--s5); border-bottom: 1px solid var(--line);
+  }
+  .case-tag {
+    font-family: var(--num); font-size: 12.5px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red);
+  }
+  .case-loc { font-family: var(--num); font-size: 13px; letter-spacing: 0.08em; color: var(--muted); }
+  .case-body { display: grid; gap: var(--s4); padding: var(--s5); }
+  @media (min-width: 620px) { .case-body { grid-template-columns: auto 1fr; gap: var(--s6); align-items: start; } }
+  .case-fig { border-left: 3px solid var(--red); padding-left: var(--s4); }
+  .case-num { font-family: var(--num); font-size: 42px; font-weight: 700; line-height: 1; color: var(--heading); white-space: nowrap; }
+  .case-lbl { font-size: 12.5px; color: var(--muted); margin-top: var(--s1); }
+  .case-body p { margin: 0; font-size: 15.5px; color: var(--muted); }
+  .case-src { margin: 0; padding: 0 var(--s5) var(--s4); font-size: 12.5px; color: var(--muted); }
+  .case-src a { color: inherit; }
+
+  /* Ablauf */
+  .steps { border-top: 1px solid var(--line); }
+  .stp { display: grid; grid-template-columns: 44px 1fr; gap: var(--s4); padding: var(--s5) 0; border-bottom: 1px solid var(--line); }
+  @media (min-width: 900px) { .stp { grid-template-columns: 72px 1fr 1fr; gap: var(--s6); align-items: start; } }
+  .stp .no { font-family: var(--num); font-size: 15px; font-weight: 700; color: var(--mist); letter-spacing: 0.06em; padding-top: 3px; }
+  .stp h3 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+  .stp p { margin: var(--s2) 0 0; color: var(--muted); font-size: 15px; }
+  @media (min-width: 900px) { .stp p { margin-top: 0; } }
+
+  /* Netzwerkdiagramm */
+  .net { background: var(--ink); color: #fff; }
+  .net .sec-head h2 { color: #fff; }
+  .net .sec-head .lede { color: #A9C0CD; }
+  .net .sec-num { color: var(--red-web); }
+  .netgrid { display: grid; gap: var(--s6); align-items: center; }
+  @media (min-width: 900px) { .netgrid { grid-template-columns: 1fr 1fr; gap: var(--s9); } }
+  .net-note { font-size: 15px; color: #A9C0CD; max-width: 46ch; }
+  .net-note strong { color: #fff; font-weight: 600; }
+  .net-legend { margin-top: var(--s5); border-top: 1px solid rgba(255,255,255,0.14); }
+  .net-legend div {
+    display: flex; gap: var(--s4); padding: var(--s3) 0;
+    border-bottom: 1px solid rgba(255,255,255,0.09); font-size: 14px;
+  }
+  .net-legend .tag { font-family: var(--num); font-weight: 600; letter-spacing: 0.06em; color: var(--mist); min-width: 78px; }
+
+  /* Aktionsblöcke */
+  .acts { display: grid; gap: var(--s4); }
+  @media (min-width: 800px) { .acts { grid-template-columns: 1fr 1fr; gap: var(--s5); } }
+  .act { background: var(--surface); border: 1px solid var(--line); padding: var(--s6); display: flex; flex-direction: column; }
+  .act .tag {
+    font-family: var(--num); font-size: 13px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red); margin-bottom: var(--s4);
+  }
+  .act h3 { margin: 0 0 var(--s3); font-size: 22px; font-weight: 600; letter-spacing: -0.015em; color: var(--on-surface); }
+  .act p { margin: 0 0 var(--s6); color: var(--muted); font-size: 15px; flex: 1; }
+
+  /* Formular */
+  .formwrap { background: var(--surface); border: 1px solid var(--line); padding: var(--s6); margin-bottom: var(--s5); }
+  @media (max-width: 620px) { .formwrap { padding: var(--s5); } }
+  .form-tag {
+    font-family: var(--num); font-size: 13px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--red); margin-bottom: var(--s3);
+  }
+  .form-h { margin: 0 0 var(--s3); font-size: 24px; font-weight: 600; letter-spacing: -0.015em; color: var(--on-surface); }
+  .form-lede { margin: 0 0 var(--s6); font-size: 15px; color: var(--muted); max-width: 60ch; }
+  .fgrid { display: grid; gap: var(--s4); }
+  @media (min-width: 700px) { .fgrid { grid-template-columns: 1fr 1fr; } .f.full { grid-column: 1 / -1; } }
+  .f label { display: block; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: var(--s2); }
+  .f .req { color: var(--red); }
+  .f input, .f select, .f textarea {
+    width: 100%; font-family: var(--sans); font-size: 15px; color: var(--text);
+    background: var(--paper); border: 1px solid var(--line-2); border-radius: 0;
+    padding: 12px 13px; transition: border-color .15s;
+  }
+  .f textarea { resize: vertical; }
+  .f input:focus, .f select:focus, .f textarea:focus { border-color: var(--steel); outline: none; box-shadow: 0 0 0 2px rgba(46,92,120,0.18); }
+  .f input.err, .f textarea.err { border-color: var(--red); }
+  .form-actions { display: flex; flex-wrap: wrap; gap: var(--s4); align-items: center; margin-top: var(--s6); }
+  .form-actions .btn { border: none; cursor: pointer; font-family: var(--sans); }
+  .form-hint { margin: 0; font-size: 13px; color: var(--muted); max-width: 44ch; }
+  .form-hint.error { color: var(--red); }
+
+  /* Trust */
+  .trust { display: grid; gap: 0; border-top: 1px solid var(--line); }
+  @media (min-width: 800px) { .trust { grid-template-columns: 1fr 1fr; column-gap: var(--s8); } }
+  .tr { padding: var(--s5) 0; border-bottom: 1px solid var(--line); }
+  .tr h3 { margin: 0 0 var(--s2); font-size: 16.5px; font-weight: 600; display: flex; align-items: baseline; gap: var(--s3); }
+  .tr h3::before { content: ""; width: 14px; height: 2px; background: var(--red); flex-shrink: 0; }
+  .tr p { margin: 0; font-size: 15px; color: var(--muted); }
+
+  /* Footer */
+  footer { background: var(--ink-deep); color: #fff; padding: var(--s8) 0 var(--s7); }
+  .foot-top { display: grid; gap: var(--s6); padding-bottom: var(--s6); border-bottom: 1px solid rgba(255,255,255,0.12); }
+  @media (min-width: 800px) { .foot-top { grid-template-columns: 1fr 1fr; align-items: end; } }
+  .foot-contact { display: grid; gap: var(--s5); }
+  @media (min-width: 620px) { .foot-contact { grid-template-columns: 1fr 1fr; } }
+  .fc-group { display: flex; flex-direction: column; gap: var(--s1); }
+  .fc-label {
+    font-family: var(--num); font-size: 12px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #7E96A4;
+  }
+  .fc-group a { font-size: 14.5px; color: #C3D5DE; text-decoration: none; }
+  .fc-group a:hover { color: #fff; text-decoration: underline; }
+  .channels { display: flex; flex-wrap: wrap; gap: var(--s4); }
+  .fc-note { font-size: 12px; color: #6E8593; margin-top: 2px; }
+  footer .legal { padding-top: var(--s5); font-size: 13px; color: #7E96A4; max-width: 60ch; }
+  footer .legal p { margin: 0 0 var(--s2); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="shell nav-in">
+    <a class="wordmark" href="#top" aria-label="depot112 Startseite">
+      <span class="w">depot</span><span class="n">112</span><span class="accent"></span>
+    </a>
+    <div class="nav-links">
+      <a href="#problem">Problem</a>
+      <a href="#ablauf">Ablauf</a>
+      <a href="#netzwerk">Netzwerk</a>
+      <a href="#vertrauen">Vertrauen</a>
+    </div>
+    <a class="nav-cta" href="#anfrage">Teil anfragen</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="shell">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <div class="kicker">BOS-Ersatzteilvermittlung</div>
+        <h1>Dein Ersatzteil gibt es nicht mehr? <em>Wir finden es trotzdem.</em></h1>
+        <p class="sub">BOS-Fahrzeuge haben oft eine Lebensdauer von über 25 Jahren — die Ersatzteilversorgung hört deutlich früher auf. depot112 vermittelt Teile, die regulär nicht mehr lieferbar sind.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#anfrage">Teil anfragen</a>
+          <a class="btn btn-ghost" href="#ablauf">So funktioniert's</a>
+        </div>
+      </div>
+
+      <div class="radar" role="img" aria-label="Schema: eine Anfrage im Zentrum, der Suchstrahl findet ein Teil im Netzwerk">
+        <svg viewBox="0 0 700 700" fill="none">
+          <defs>
+            <linearGradient id="cone" x1="350" y1="350" x2="350" y2="20" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#DFFF3D" stop-opacity="0.5"/>
+              <stop offset="1" stop-color="#DFFF3D" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Reichweitenringe -->
+          <circle cx="350" cy="350" r="330" stroke="#8FB3C4" stroke-opacity="0.32"/>
+          <circle cx="350" cy="350" r="255" stroke="#8FB3C4" stroke-opacity="0.42"/>
+          <circle cx="350" cy="350" r="180" stroke="#8FB3C4" stroke-opacity="0.52"/>
+          <circle cx="350" cy="350" r="105" stroke="#8FB3C4" stroke-opacity="0.62"/>
+
+          <!-- Achsen -->
+          <line x1="20" y1="350" x2="680" y2="350" stroke="#8FB3C4" stroke-opacity="0.26"/>
+          <line x1="350" y1="20" x2="350" y2="680" stroke="#8FB3C4" stroke-opacity="0.26"/>
+
+          <!-- 112 als Wasserzeichen -->
+          <text x="350" y="415" text-anchor="middle" font-family="Barlow Condensed, Arial Narrow, sans-serif"
+                font-size="250" font-weight="800" fill="#8FB3C4" fill-opacity="0.15" letter-spacing="8">112</text>
+
+          <!-- Suchkegel -->
+          <g class="sweep">
+            <path d="M350 350 L248 34 A330 330 0 0 1 452 34 Z" fill="url(#cone)"/>
+            <line x1="350" y1="350" x2="350" y2="20" stroke="#DFFF3D" stroke-opacity="1" stroke-width="2.5"/>
+          </g>
+
+          <!-- Quellen im Netzwerk -->
+          <g font-family="IBM Plex Sans, sans-serif" font-size="17" fill="#8FB3C4">
+            <circle cx="222" cy="486" r="5" fill="#8FB3C4" fill-opacity="0.85"/>
+            <text x="238" y="492">Verwerter</text>
+            <circle cx="546" cy="440" r="5" fill="#8FB3C4" fill-opacity="0.8"/>
+            <text x="530" y="446" text-anchor="end">Händler</text>
+            <circle cx="176" cy="240" r="5" fill="#8FB3C4" fill-opacity="0.75"/>
+            <text x="192" y="246">andere BOS</text>
+            <circle cx="474" cy="588" r="5" fill="#8FB3C4" fill-opacity="0.7"/>
+            <text x="458" y="594" text-anchor="end">Sammler</text>
+          </g>
+
+          <!-- Treffer -->
+          <circle class="blip-ring" cx="452" cy="228" r="18" stroke="#E4574A" stroke-opacity="0.9" stroke-width="2"/>
+          <circle class="blip" cx="452" cy="228" r="6" fill="#E4574A"/>
+          <text x="470" y="222" font-family="IBM Plex Sans, sans-serif" font-size="18" font-weight="600" fill="#E4574A">Teil gefunden</text>
+
+          <!-- Zentrum -->
+          <circle cx="350" cy="350" r="7" fill="#DFFF3D"/>
+          <text x="350" y="330" text-anchor="middle" font-family="IBM Plex Sans, sans-serif"
+                font-size="17" font-weight="600" fill="#DFFF3D">Anfrage</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="context">
+  <div class="shell context-grid">
+    <div class="ctx"><div class="v">15–25</div><div class="k">Jahre Nutzungsdauer je nach Fahrzeugtyp — mindestens</div></div>
+    <div class="ctx"><div class="v">ab 15</div><div class="k">Jahren wird die Ersatzteilversorgung schwierig. Ab 20 Jahren steigen Ausfallzeiten und Unterhaltskosten deutlich an</div></div>
+    <div class="ctx"><div class="v">0 €</div><div class="k">Kosten, wenn wir das Teil nicht vermitteln können</div></div>
+  </div>
+</section>
+
+<main>
+
+<section class="sec" id="problem">
+  <div class="shell">
+    <div class="split">
+      <div class="sec-head" style="margin-bottom:0;">
+        <div class="sec-num">01</div>
+        <div>
+          <h2>Ein Fahrzeug, zwei Teile-Welten</h2>
+          <p class="lede">Und für beide endet die reguläre Versorgung oft lange vor dem Ende der Nutzungsdauer.</p>
+        </div>
+      </div>
+      <div class="prob">
+        <p><strong>Fahrgestell.</strong> Motor, Bremsen, Kupplung, Getriebe, Lichtmaschine oder Kühler – für MAN, Mercedes-Benz und Iveco. Viele Teile sind noch verfügbar, aber nicht mehr über den klassischen Weg. Sie finden sich bei Nutzfahrzeug-Teilehändlern, spezialisierten Händlern, Verwertern und Werkstattnetzwerken.</p>
+        <p><strong>Aufbau.</strong> Feuerlöschkreiselpumpe, Rollläden, Auszüge, Halterungen oder Steuerungstechnik – von Rosenbauer, Ziegler, Magirus, Schlingmann und vielen anderen. Oft in kleinen Serien oder als Einzelanfertigung gebaut. Wenn der Hersteller nicht mehr weiterhilft, braucht es andere Wege.</p>
+        <p class="claim">Genau diese Wege kennen wir.</p>
+
+        <div class="case">
+          <div class="case-head">
+            <span class="case-tag">Was auf dem Spiel steht</span>
+            <span class="case-loc">Wesenberg, MV · 2024</span>
+          </div>
+          <div class="case-body">
+            <div class="case-fig">
+              <div class="case-num">550.000 €</div>
+              <div class="case-lbl">Ersatzbeschaffung</div>
+            </div>
+            <p>Für das rund 30 Jahre alte Tanklöschfahrzeug waren bestimmte Ersatzteile nicht mehr lieferbar. Um einen drohenden Totalausfall zu vermeiden, blieb der Stadt nur die komplette Neubeschaffung.</p>
+          </div>
+          <p class="case-src">Nach Angaben von Bürgermeister Steffen Rißmann · <a href="https://www.nordkurier.de/regional/neustrelitz/wesenberger-feuerwehr-soll-neues-tankloeschfahrzeug-erhalten-2547470">Nordkurier, 2024</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ablauf">
+  <div class="shell">
+    <div class="sec-head">
+      <div class="sec-num">02</div>
+      <div>
+        <h2>Anfragen, suchen lassen, Teil bekommen</h2>
+        <p class="lede">Drei Schritte. Bezahlt wird erst, wenn das Teil da ist.</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="stp">
+        <div class="no">01</div>
+        <h3>Anfrage stellen</h3>
+        <p>Fahrzeugtyp, Baujahr, Chassis- und Aufbauhersteller, gesuchtes Teil. Teilenummer oder Foto hilft, ist aber kein Muss.</p>
+      </div>
+      <div class="stp">
+        <div class="no">02</div>
+        <h3>Netzwerk wird durchsucht</h3>
+        <p>Je nach Teil geht die Anfrage in den Kfz-Fachhandel oder in die Blaulichtfamilie — Verwerter, Nutzfahrzeug- und Spezialhändler, Werkstattnetzwerke, Aufbauhersteller, andere BOS-Organisationen, Sammler und Ausschlachter.</p>
+      </div>
+      <div class="stp">
+        <div class="no">03</div>
+        <h3>Vermittlung</h3>
+        <p>Direkter Kontakt zum Anbieter, Preis und Abwicklung laufen zwischen euch. Unsere Provision fällt nur bei erfolgreicher Vermittlung an.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec net" id="netzwerk">
+  <div class="shell">
+    <div class="sec-head">
+      <div class="sec-num">03</div>
+      <div>
+        <h2>Kein Lager. Ein Netzwerk.</h2>
+        <p class="lede">depot112 hält keine Teile vorrätig — und genau das ist der Punkt.</p>
+      </div>
+    </div>
+    <div class="netgrid">
+      <div>
+        <svg viewBox="0 0 460 400" width="100%" height="auto" role="img" aria-label="Schema: Anfragen von Feuerwehr und THW laufen über depot112 zu Kfz-Fachhandel und Blaulichtfamilie">
+          <!-- Quelle -->
+          <rect x="130" y="10" width="200" height="52" fill="none" stroke="#8FB3C4" stroke-opacity="0.55"/>
+          <text x="230" y="34" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="14" font-weight="600" fill="#FFFFFF">BOS-Organisation</text>
+          <text x="230" y="52" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#8FB3C4">Teil wird gesucht</text>
+
+          <line x1="230" y1="62" x2="230" y2="120" stroke="#DFFF3D" stroke-opacity="0.6" stroke-width="1.5"/>
+          <path d="M226 114 L230 122 L234 114" fill="#DFFF3D" fill-opacity="0.6"/>
+
+          <!-- Hub: Wortmarke -->
+          <rect x="150" y="122" width="160" height="56" fill="#DFFF3D" fill-opacity="0.1" stroke="#DFFF3D" stroke-opacity="0.5"/>
+          <text x="230" y="150" text-anchor="middle" font-size="18" textLength="92" lengthAdjust="spacingAndGlyphs">
+            <tspan font-family="IBM Plex Sans, sans-serif" font-weight="600" fill="#FFFFFF">depot</tspan><tspan font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="800" fill="#C24234" letter-spacing="0.5">112</tspan>
+          </text>
+          <line x1="184" y1="156" x2="276" y2="156" stroke="#DFFF3D" stroke-width="2"/>
+          <line x1="276" y1="156" x2="284" y2="144.5" stroke="#DFFF3D" stroke-width="2"/>
+          <text x="230" y="172" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#8FB3C4">ordnet zu · fragt an</text>
+
+          <!-- Verzweigung -->
+          <line x1="230" y1="178" x2="230" y2="200" stroke="#8FB3C4" stroke-opacity="0.4"/>
+          <line x1="112" y1="200" x2="348" y2="200" stroke="#8FB3C4" stroke-opacity="0.4"/>
+          <line x1="112" y1="200" x2="112" y2="228" stroke="#8FB3C4" stroke-opacity="0.4"/>
+          <line x1="348" y1="200" x2="348" y2="228" stroke="#8FB3C4" stroke-opacity="0.4"/>
+
+          <!-- Zweig links -->
+          <rect x="22" y="228" width="180" height="46" fill="none" stroke="#8FB3C4" stroke-opacity="0.4"/>
+          <text x="112" y="248" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">Fahrgestell</text>
+          <text x="112" y="265" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#8FB3C4">z. B. MAN, Mercedes, Iveco</text>
+          <line x1="112" y1="274" x2="112" y2="300" stroke="#8FB3C4" stroke-opacity="0.3"/>
+          <text x="112" y="318" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#A9C0CD">Kfz-Verwerter</text>
+          <text x="112" y="336" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#A9C0CD">Teilehändler</text>
+          <text x="112" y="354" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#A9C0CD">Nutzfahrzeug-Werkstätten</text>
+
+          <!-- Zweig rechts -->
+          <rect x="258" y="228" width="180" height="46" fill="none" stroke="#8FB3C4" stroke-opacity="0.4"/>
+          <text x="348" y="248" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">Aufbau</text>
+          <text x="348" y="265" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11" fill="#8FB3C4">z. B. Rosenbauer, Ziegler, Magirus</text>
+          <line x1="348" y1="274" x2="348" y2="300" stroke="#8FB3C4" stroke-opacity="0.3"/>
+          <text x="348" y="318" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#A9C0CD">andere BOS-Organisationen</text>
+          <text x="348" y="336" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#A9C0CD">Aufbau-Werkstätten</text>
+          <text x="348" y="354" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#A9C0CD">Sammler · Ausschlachter</text>
+
+          <line x1="22" y1="378" x2="438" y2="378" stroke="#C24234" stroke-opacity="0.7" stroke-width="1.5"/>
+          <text x="230" y="396" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="11.5" fill="#8FB3C4">Der Kontakt geht direkt an den Anfragenden zurück</text>
+        </svg>
+      </div>
+      <div>
+        <p class="net-note"><strong>Ein Lager wäre das falsche Modell.</strong> BOS-Fahrzeuge kommen von vielen verschiedenen Aufbauherstellern und Fahrgestellmarken, über Jahrzehnte hinweg, dazu unzählige Sonderausführungen und Einzelanfertigungen. Diese Vielfalt kann niemand bevorraten.</p>
+        <p class="net-note" style="margin-top:var(--s4);">Was funktioniert: wissen, wo das Teil liegt. depot112 kennt beide Seiten — den Kfz-Teilemarkt und die Blaulichtfamilie — und verbindet sie fallweise.</p>
+        <div class="net-legend">
+          <div><span class="tag">Rolle</span><span>Vermittler, nicht Verkäufer</span></div>
+          <div><span class="tag">Kosten</span><span>Erfolgsprovision je Fall, optional Jahres-Abo</span></div>
+          <div><span class="tag">Risiko</span><span>Keine Vorkasse, keine Grundgebühr für eine Anfrage</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="anfrage">
+  <div class="shell">
+    <div class="sec-head">
+      <div class="sec-num">04</div>
+      <div>
+        <h2>Loslegen</h2>
+        <p class="lede">Zwei Wege — je nachdem, ob du ein Teil suchst oder eins liefern kannst.</p>
+      </div>
+    </div>
+
+    <div class="formwrap">
+      <div class="form-tag">Für BOS-Organisationen</div>
+      <h3 class="form-h">Ersatzteil anfragen</h3>
+      <p class="form-lede">Je genauer die Angaben, desto schneller die Rückmeldung. Pflicht sind nur Organisation, Kontakt und das gesuchte Teil. Kommt keine Vermittlung zustande, kostet es nichts.</p>
+
+      <form id="anfrageform" novalidate>
+        <div class="fgrid">
+          <div class="f">
+            <label for="org">Organisation <span class="req">*</span></label>
+            <input id="org" name="org" required placeholder="z. B. Freiwillige Feuerwehr Musterstadt">
+          </div>
+          <div class="f">
+            <label for="kontakt">Kontakt (E-Mail oder Telefon) <span class="req">*</span></label>
+            <input id="kontakt" name="kontakt" required placeholder="für unsere Rückmeldung">
+          </div>
+          <div class="f">
+            <label for="ansprech">Ansprechpartner</label>
+            <input id="ansprech" name="ansprech" placeholder="Name, Funktion">
+          </div>
+          <div class="f">
+            <label for="fzg">Fahrzeugtyp</label>
+            <input id="fzg" name="fzg" placeholder="z. B. TLF 16/25, GKW 1, RTW">
+          </div>
+          <div class="f">
+            <label for="baujahr">Baujahr</label>
+            <input id="baujahr" name="baujahr" inputmode="numeric" placeholder="z. B. 2005">
+          </div>
+          <div class="f">
+            <label for="chassis">Fahrgestell-Hersteller</label>
+            <input id="chassis" name="chassis" list="chassisliste" placeholder="MAN, Mercedes-Benz, Iveco …">
+            <datalist id="chassisliste">
+              <option value="MAN"></option><option value="Mercedes-Benz"></option><option value="Iveco"></option>
+              <option value="Scania"></option><option value="Volvo"></option><option value="VW"></option>
+            </datalist>
+          </div>
+          <div class="f">
+            <label for="aufbau">Aufbau-Hersteller</label>
+            <input id="aufbau" name="aufbau" list="aufbauliste" placeholder="Rosenbauer, Ziegler, Magirus …">
+            <datalist id="aufbauliste">
+              <option value="Rosenbauer"></option><option value="Ziegler"></option><option value="Magirus"></option>
+              <option value="Schlingmann"></option><option value="Lentner"></option><option value="GIMAEX"></option>
+              <option value="WISS"></option><option value="Binz"></option><option value="Fahrtec"></option>
+            </datalist>
+          </div>
+          <div class="f">
+            <label for="dring">Dringlichkeit</label>
+            <select id="dring" name="dring">
+              <option>Normal</option><option>Hoch — Fahrzeug steht</option><option>Niedrig — Vorratsbeschaffung</option>
+            </select>
+          </div>
+          <div class="f full">
+            <label for="teil">Gesuchtes Teil <span class="req">*</span></label>
+            <textarea id="teil" name="teil" required rows="3" placeholder="Was wird gebraucht? Teilenummer, Einbauort oder Beschreibung — was du hast."></textarea>
+          </div>
+          <div class="f full">
+            <label for="notiz">Weitere Hinweise</label>
+            <textarea id="notiz" name="notiz" rows="2" placeholder="Optional: bereits versuchte Wege, Zeitrahmen, Alternativen zulässig?"></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Anfrage senden</button>
+          <p class="form-hint" id="formhint">Öffnet deine E-Mail-App mit allen Angaben — du schickst sie selbst ab und behältst eine Kopie.</p>
+        </div>
+      </form>
+    </div>
+
+    <div class="acts">
+      <div class="act">
+        <div class="tag">Für Netzwerkpartner</div>
+        <h3>Teile anbieten</h3>
+        <p>Kfz-Verwerter, Nutzfahrzeug-Händler, Aufbau-Werkstatt oder Sammler: Wir leiten passende Anfragen aus der Blaulichtfamilie an dich weiter. Kein Vertrag, keine Gebühr.</p>
+        <div><a class="btn btn-line" href="mailto:partner@depot112.de?subject=Netzwerkpartner%20depot112&amp;body=Firma%3A%0ASchwerpunkt%20(Fahrgestell%2FAufbau)%3A%0ARegion%3A%0AKontakt%3A%0A">Partner werden</a></div>
+      </div>
+      <div class="act">
+        <div class="tag">Leitung &amp; Allgemeines</div>
+        <h3>Direkt Kontakt aufnehmen</h3>
+        <p>Fragen zum Modell, zur Zusammenarbeit oder zu Konditionen — für Wehrleitung, Verwaltung und alles, was keine konkrete Teileanfrage ist.</p>
+        <div><a class="btn btn-line" href="mailto:kommandant@depot112.de?subject=Anfrage%20depot112">Nachricht schreiben</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="vertrauen">
+  <div class="shell">
+    <div class="sec-head">
+      <div class="sec-num">05</div>
+      <div>
+        <h2>Wie wir arbeiten</h2>
+        <p class="lede">Ein Vermittler ohne Lager muss erklären, wofür er steht. Hier steht es.</p>
+      </div>
+    </div>
+    <div class="trust">
+      <div class="tr">
+        <h3>Wir sind Vermittler, nicht Händler</h3>
+        <p>Kauf und Zahlung laufen direkt zwischen euch und dem Anbieter. Wir sind nicht Vertragspartei und übernehmen keine Gewährleistung für vermittelte Teile.</p>
+      </div>
+      <div class="tr">
+        <h3>Bezahlt wird nach Erfolg</h3>
+        <p>Die Provision fällt an, wenn ein Teil tatsächlich vermittelt wurde. Für eine Anfrage, die ins Leere läuft, zahlt niemand etwas.</p>
+      </div>
+      <div class="tr">
+        <h3>Herkunft aus der Sache</h3>
+        <p>depot112 kommt aus der Blaulichtfamilie und aus dem Kfz-Teilegeschäft. Genau diese Doppelrolle ist der Grund, warum die Vermittlung überhaupt funktioniert.</p>
+      </div>
+      <div class="tr">
+        <h3>Sicherheitsrelevante Teile</h3>
+        <p>Ob ein vermitteltes Teil verbaut werden darf, entscheidet immer die zuständige Werkstatt oder Fachfirma. Wir liefern den Kontakt, nicht die technische Freigabe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="shell">
+    <div class="foot-top">
+      <div>
+        <a class="wordmark" href="#top" style="font-size:26px;"><span class="w">depot</span><span class="n">112</span><span class="accent"></span></a>
+        <p style="color:#93AAB8; font-size:14px; margin:var(--s5) 0 0; max-width:38ch;">Ersatzteilvermittlung für BOS-Fahrzeuge.</p>
+      </div>
+      <div class="foot-contact">
+        <div class="fc-group">
+          <span class="fc-label">Teileanfragen</span>
+          <a href="mailto:geraetewart@depot112.de">geraetewart@depot112.de</a>
+        </div>
+        <div class="fc-group">
+          <span class="fc-label">Leitung &amp; Allgemeines</span>
+          <a href="mailto:kommandant@depot112.de">kommandant@depot112.de</a>
+        </div>
+        <div class="fc-group">
+          <span class="fc-label">Netzwerkpartner</span>
+          <a href="mailto:partner@depot112.de">partner@depot112.de</a>
+        </div>
+        <div class="fc-group">
+          <span class="fc-label">Kanäle</span>
+          <div class="channels">
+            <a href="#" aria-label="Instagram (folgt)">Instagram</a>
+            <a href="#" aria-label="WhatsApp (folgt)">WhatsApp</a>
+            <a href="#" aria-label="LinkedIn (folgt)">LinkedIn</a>
+          </div>
+          <span class="fc-note">Kanäle im Aufbau</span>
+        </div>
+      </div>
+    </div>
+    <div class="legal">
+      <p>Reine Vermittlungstätigkeit. Kein Teileverkauf, keine Gewährleistung auf vermittelte Teile, keine technische Freigabe.</p>
+      <p>Impressum &amp; Datenschutz: [wird ergänzt]</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var form = document.getElementById('anfrageform');
+  if (!form) return;
+  var hint = document.getElementById('formhint');
+  var defaultHint = hint.textContent;
+
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var required = ['org', 'kontakt', 'teil'];
+    var missing = [];
+    required.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el.value.trim()) { el.classList.add('err'); missing.push(el); }
+      else { el.classList.remove('err'); }
+    });
+
+    if (missing.length) {
+      hint.textContent = 'Bitte Organisation, Kontakt und gesuchtes Teil ausfüllen.';
+      hint.classList.add('error');
+      missing[0].focus();
+      return;
+    }
+
+    hint.textContent = defaultHint;
+    hint.classList.remove('error');
+
+    var rows = [
+      ['Organisation', val('org')],
+      ['Ansprechpartner', val('ansprech')],
+      ['Kontakt', val('kontakt')],
+      ['Fahrzeugtyp', val('fzg')],
+      ['Baujahr', val('baujahr')],
+      ['Fahrgestell-Hersteller', val('chassis')],
+      ['Aufbau-Hersteller', val('aufbau')],
+      ['Dringlichkeit', val('dring')],
+      ['Gesuchtes Teil', val('teil')],
+      ['Weitere Hinweise', val('notiz')]
+    ];
+
+    var body = rows
+      .filter(function (r) { return r[1]; })
+      .map(function (r) { return r[0] + ': ' + r[1]; })
+      .join('\n');
+
+    var subject = 'Ersatzteil-Anfrage — ' + val('org');
+    window.location.href = 'mailto:geraetewart@depot112.de'
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(body);
+  });
+})();
+</script>
+
+</body>
+</html>
