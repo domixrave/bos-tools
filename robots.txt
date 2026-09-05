@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://depot-112.de/sitemap.xml
