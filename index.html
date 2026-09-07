@@ -472,6 +472,16 @@
     padding: var(--s3); min-height: 130px; resize: vertical;
   }
 
+  /* Honeypot: aus dem Blickfeld, aber nicht display:none — das ueberspringen manche Bots */
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  .status-box.ok { border-color: var(--steel); border-width: 2px; }
+  .status-id {
+    display: inline-block; margin-top: var(--s2); padding: 6px 10px;
+    font-family: var(--num); font-size: 17px; font-weight: 700; letter-spacing: 0.06em;
+    background: var(--paper); border: 1px solid var(--line-2); color: var(--on-surface);
+  }
+
   .noscript-box { border: 1px solid var(--line-2); background: var(--paper); padding: var(--s5); margin-bottom: var(--s5); }
   .noscript-box p { margin: 0 0 var(--s2); font-size: 15px; }
   .noscript-box p:last-child { margin-bottom: 0; }
@@ -913,6 +923,12 @@
       </noscript>
 
       <form id="anfrageform" novalidate>
+        <!-- Spamschutz: fuer Menschen unsichtbar, Bots fuellen es aus -->
+        <div class="hp" aria-hidden="true">
+          <label for="website">Website (bitte frei lassen)</label>
+          <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
         <div class="fgrid">
           <div class="f full">
             <label for="teil">Gesuchtes Teil <span class="req" aria-hidden="true">*</span><span class="sr-only">(Pflichtfeld)</span></label>
@@ -1145,8 +1161,21 @@
   var statusEl = document.getElementById('formstatus');
   var EMPFAENGER = 'anfrage@depot-112.de';
 
+  /* Adresse des Anfrage-Endpunkts (Cloudflare Worker).
+     Leer lassen = Formular bereitet wie bisher nur eine E-Mail vor.
+     Das ist zugleich der Notausschalter: Bei einer Stoerung hier leeren,
+     dann laeuft sofort wieder der mailto-Weg. */
+  var ANFRAGE_ENDPUNKT = 'https://depot112-anfrage.dominik-buchinger.workers.dev';
+
+  var direktversand = /^https:\/\/\S+$/.test(ANFRAGE_ENDPUNKT);
+  var formularGeoeffnet = Date.now();
+
+  var absendeBtn = form.querySelector('button[type=submit]');
+  var hinweisEl  = document.getElementById('formhint');
+
   function el(id) { return document.getElementById(id); }
   function val(id) { var e = el(id); return e ? e.value.trim() : ''; }
+  function clearStatus() { statusEl.innerHTML = ''; }
 
   function setError(id, message) {
     var field = el(id);
@@ -1167,8 +1196,6 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
   }
 
-  function clearStatus() { statusEl.innerHTML = ''; }
-
   ['teil', 'org', 'email'].forEach(function (id) {
     var field = el(id);
     if (field) {
@@ -1178,40 +1205,16 @@
     }
   });
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    clearStatus();
+  /* Beschriftung ehrlich halten: Nur wenn wirklich direkt gesendet wird,
+     darf der Button "senden" heissen. */
+  if (direktversand) {
+    absendeBtn.textContent = 'Anfrage senden';
+    hinweisEl.textContent  = 'Geht direkt bei uns ein. Ihr bekommt eine Anfrage-Nummer zur Rückfrage.';
+  }
 
-    var problems = [];
-
-    if (!val('teil')) {
-      setError('teil', 'Bitte beschreibt kurz, welches Teil gesucht wird.');
-      problems.push('teil');
-    } else { setError('teil', ''); }
-
-    if (!val('org')) {
-      setError('org', 'Bitte nennt eure Organisation.');
-      problems.push('org');
-    } else { setError('org', ''); }
-
-    var mail = val('email');
-    if (!mail) {
-      setError('email', 'Bitte gebt eine E-Mail-Adresse für unsere Rückmeldung an.');
-      problems.push('email');
-    } else if (!looksLikeEmail(mail)) {
-      setError('email', 'Diese E-Mail-Adresse sieht unvollständig aus. Bitte prüft sie kurz.');
-      problems.push('email');
-    } else { setError('email', ''); }
-
-    if (problems.length) {
-      statusEl.innerHTML =
-        '<div class="status-box err"><h4>Es fehlen noch Angaben</h4>' +
-        '<p>Bitte ergänzt die rot markierten Felder. Eure bereits eingetragenen Angaben bleiben erhalten.</p></div>';
-      el(problems[0]).focus();
-      return;
-    }
-
-    var rows = [
+  /* Baut den Mailtext — fuer den Fallback und das Kopierfeld. */
+  function baueMail() {
+    var zeilen = [
       ['Organisation', val('org')],
       ['Ansprechpartner', val('ansprech')],
       ['E-Mail', val('email')],
@@ -1226,49 +1229,179 @@
       ['Aufbau-Hersteller', val('aufbau')],
       ['Weitere Hinweise', val('notiz')]
     ];
-
-    var body = rows
+    var body = zeilen
       .filter(function (r) { return r[0] === '' || r[1]; })
       .map(function (r) { return r[0] === '' ? '' : r[0] + ': ' + r[1]; })
       .join('\n');
+    var betreff = 'Ersatzteil-Anfrage — ' + val('org');
+    return {
+      betreff: betreff,
+      body: body,
+      href: 'mailto:' + EMPFAENGER +
+            '?subject=' + encodeURIComponent(betreff) +
+            '&body=' + encodeURIComponent(body)
+    };
+  }
 
-    var subject = 'Ersatzteil-Anfrage — ' + val('org');
-    var href = 'mailto:' + EMPFAENGER +
-      '?subject=' + encodeURIComponent(subject) +
-      '&body=' + encodeURIComponent(body);
+  function kopierbarMachen(mail) {
+    var ta = el('mailtext');
+    if (ta) ta.value = 'An: ' + EMPFAENGER + '\nBetreff: ' + mail.betreff + '\n\n' + mail.body;
+    var copyBtn = el('copybtn');
+    if (!copyBtn) return;
+    copyBtn.addEventListener('click', function () {
+      var feld = el('mailtext');
+      var fertig = function () {
+        copyBtn.textContent = 'Text kopiert';
+        setTimeout(function () { copyBtn.textContent = 'Text kopieren'; }, 2500);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(feld.value).then(fertig, function () { feld.select(); });
+      } else {
+        feld.select();
+        try { document.execCommand('copy'); fertig(); } catch (err) { /* Nutzer kopiert selbst */ }
+      }
+    });
+  }
 
+  /* Der E-Mail-Weg. Regulaerer Pfad ohne Endpunkt, Notfallpfad mit. */
+  function mailWegGehen(vorspann) {
+    var mail = baueMail();
     statusEl.innerHTML =
       '<div class="status-box">' +
-      '<h4>E-Mail vorbereitet</h4>' +
+      '<h4>' + (vorspann ? 'Anfrage per E-Mail senden' : 'E-Mail vorbereitet') + '</h4>' +
+      (vorspann ? '<p>' + vorspann + '</p>' : '') +
       '<p>Euer E-Mail-Programm sollte sich jetzt mit den Angaben öffnen. <strong>Die Anfrage ist erst bei uns, wenn ihr sie dort abschickt.</strong> Fotos könnt ihr vorher anhängen.</p>' +
       '<p>Falls sich nichts geöffnet hat, kopiert den Text und sendet ihn an <a href="mailto:' + EMPFAENGER + '">' + EMPFAENGER + '</a>.</p>' +
       '<div class="status-actions">' +
-      '<a class="btn btn-line" id="mailagain" href="' + href.replace(/"/g, '&quot;') + '">E-Mail-Programm öffnen</a>' +
+      '<a class="btn btn-line" id="mailagain" href="' + mail.href.replace(/"/g, '&quot;') + '">E-Mail-Programm öffnen</a>' +
       '<button type="button" class="btn btn-quiet" id="copybtn">Text kopieren</button>' +
       '</div>' +
       '<label class="sr-only" for="mailtext">Vorbereiteter Anfragetext</label>' +
       '<textarea class="mailpreview" id="mailtext" readonly></textarea>' +
       '</div>';
-
-    el('mailtext').value = 'An: ' + EMPFAENGER + '\nBetreff: ' + subject + '\n\n' + body;
-
-    var copyBtn = el('copybtn');
-    copyBtn.addEventListener('click', function () {
-      var ta = el('mailtext');
-      var done = function () {
-        copyBtn.textContent = 'Text kopiert';
-        setTimeout(function () { copyBtn.textContent = 'Text kopieren'; }, 2500);
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(ta.value).then(done, function () { ta.select(); });
-      } else {
-        ta.select();
-        try { document.execCommand('copy'); done(); } catch (err) { /* Nutzer kopiert manuell */ }
-      }
-    });
-
+    kopierbarMachen(mail);
     statusEl.scrollIntoView({ block: 'nearest' });
-    window.location.href = href;
+    window.location.href = mail.href;
+  }
+
+  /* Direktversand an den Endpunkt. */
+  function direktSenden() {
+    absendeBtn.disabled = true;
+    absendeBtn.textContent = 'Wird gesendet …';
+    statusEl.innerHTML = '<div class="status-box"><p>Anfrage wird übermittelt …</p></div>';
+
+    var nutzlast = {
+      teil: val('teil'), org: val('org'), email: val('email'), telefon: val('telefon'),
+      ansprech: val('ansprech'), dring: val('dring'), teilenr: val('teilenr'),
+      fzg: val('fzg'), baujahr: val('baujahr'), chassis: val('chassis'),
+      aufbau: val('aufbau'), notiz: val('notiz'),
+      website: val('website'),
+      dauerMs: Date.now() - formularGeoeffnet
+    };
+
+    /* Harte Zeitgrenze: lieber nach 15 s ehrlich auf E-Mail ausweichen,
+       als den Nutzer unbegrenzt auf "Wird gesendet" starren lassen. */
+    var abbruch = new AbortController();
+    var wecker = setTimeout(function () { abbruch.abort(); }, 15000);
+
+    fetch(ANFRAGE_ENDPUNKT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(nutzlast),
+      signal: abbruch.signal
+    })
+      .then(function (antwort) {
+        clearTimeout(wecker);
+        return antwort.json().then(function (daten) {
+          return { status: antwort.status, daten: daten };
+        });
+      })
+      .then(function (ergebnis) {
+        if (ergebnis.status === 200 && ergebnis.daten && ergebnis.daten.ok) {
+          var nummer = String(ergebnis.daten.id || '').replace(/[^A-Za-z0-9-]/g, '');
+          absendeBtn.textContent = 'Anfrage gesendet';
+          statusEl.innerHTML =
+            '<div class="status-box ok">' +
+            '<h4>Anfrage ist eingegangen</h4>' +
+            '<p>Wir melden uns bei euch per E-Mail. Notiert euch die Nummer für Rückfragen:</p>' +
+            '<div class="status-id">' + nummer + '</div>' +
+            '<p style="margin-top:var(--s4);">Habt ihr Fotos zum Teil? Schickt sie mit der Nummer im Betreff an ' +
+            '<a href="mailto:' + EMPFAENGER + '?subject=' + encodeURIComponent('Fotos zu ' + nummer) + '">' + EMPFAENGER + '</a>.</p>' +
+            '</div>';
+          Array.prototype.forEach.call(
+            form.querySelectorAll('input, textarea, select'),
+            function (f) { f.disabled = true; }
+          );
+          statusEl.scrollIntoView({ block: 'nearest' });
+          return;
+        }
+
+        if (ergebnis.status === 422 && ergebnis.daten && ergebnis.daten.felder) {
+          absendeBtn.disabled = false;
+          absendeBtn.textContent = 'Anfrage senden';
+          var texte = {
+            teil:  'Bitte beschreibt kurz, welches Teil gesucht wird.',
+            org:   'Bitte nennt eure Organisation.',
+            email: 'Diese E-Mail-Adresse sieht unvollständig aus. Bitte prüft sie kurz.'
+          };
+          ergebnis.daten.felder.forEach(function (f) { setError(f, texte[f] || 'Bitte prüfen.'); });
+          statusEl.innerHTML =
+            '<div class="status-box err"><h4>Es fehlen noch Angaben</h4>' +
+            '<p>Bitte ergänzt die rot markierten Felder.</p></div>';
+          var erstes = el(ergebnis.daten.felder[0]);
+          if (erstes) erstes.focus();
+          return;
+        }
+
+        throw new Error('Endpunkt antwortete mit ' + ergebnis.status);
+      })
+      .catch(function (fehler) {
+        clearTimeout(wecker);
+        absendeBtn.disabled = false;
+        absendeBtn.textContent = 'Anfrage senden';
+        console.error('Direktversand fehlgeschlagen:', fehler);
+        mailWegGehen('Der direkte Versand hat gerade nicht funktioniert. Damit eure Anfrage nicht verloren geht, haben wir sie in eine E-Mail übernommen.');
+      });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearStatus();
+
+    var probleme = [];
+
+    if (!val('teil')) {
+      setError('teil', 'Bitte beschreibt kurz, welches Teil gesucht wird.');
+      probleme.push('teil');
+    } else { setError('teil', ''); }
+
+    if (!val('org')) {
+      setError('org', 'Bitte nennt eure Organisation.');
+      probleme.push('org');
+    } else { setError('org', ''); }
+
+    var mail = val('email');
+    if (!mail) {
+      setError('email', 'Bitte gebt eine E-Mail-Adresse für unsere Rückmeldung an.');
+      probleme.push('email');
+    } else if (!looksLikeEmail(mail)) {
+      setError('email', 'Diese E-Mail-Adresse sieht unvollständig aus. Bitte prüft sie kurz.');
+      probleme.push('email');
+    } else { setError('email', ''); }
+
+    if (probleme.length) {
+      statusEl.innerHTML =
+        '<div class="status-box err"><h4>Es fehlen noch Angaben</h4>' +
+        '<p>Bitte ergänzt die rot markierten Felder. Eure bereits eingetragenen Angaben bleiben erhalten.</p></div>';
+      el(probleme[0]).focus();
+      return;
+    }
+
+    if (direktversand) {
+      direktSenden();
+    } else {
+      mailWegGehen('');
+    }
   });
 })();
 </script>
