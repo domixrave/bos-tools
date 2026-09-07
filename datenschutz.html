@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenschutzerklärung — depot112</title>
+<meta name="description" content="Datenschutzerklärung von depot112: welche Daten beim Anfrageformular verarbeitet werden, wer sie erhält und wie lange sie gespeichert werden.">
+<link rel="canonical" href="https://depot-112.de/datenschutz.html">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#12303F">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Markenwelt */
+    --ink:      #1B4258;
+    --ink-deep: #12303F;
+    --steel:    #2E5C78;
+    --mist:     #8FB3C4;
+    /* Signal */
+    --red:      #9C2E24;
+    --red-web:  #C24234;
+    /* Aktion */
+    --signal:      #DFFF3D;
+    --signal-text: #1E2900;
+    /* Flächen */
+    --paper:  #F3F4F3;
+    --surface:#FFFFFF;
+    --line:   #DDE1E2;
+    --line-2: #C9D0D2;
+    --text:   #14181B;
+    --muted:  #5B6469;
+    /* semantisch — werden im Darkmode überschrieben */
+    --heading:    #1B4258;
+    --on-surface: #1B4258;
+    --numeral:    #2E5C78;
+    --focus:      #12303F;
+    /* Textfarben auf dunklen Flächen (kontrastgeprüft) */
+    --on-dark:      #FFFFFF;
+    --on-dark-soft: #B9CCD7;
+    --on-dark-mute: #A2B8C4;
+
+    --sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --num:  'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+
+    --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px;
+    --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+    --s9: 96px; --s10: 128px;
+
+    --nav-h: 68px;
+
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:   #0E1A22;
+      --surface: #14242E;
+      --line:    #243A47;
+      --line-2:  #2E4653;
+      --text:    #E6EDF1;
+      --muted:   #A6B8C2;
+      /* Blau muss auf dunklem Grund heller werden, sonst verschwindet es */
+      --ink:      #14262F;
+      --ink-deep: #0B1720;
+      --heading:    #DCE9F0;
+      --on-surface: #DCE9F0;
+      --numeral:    #8FB3C4;
+      --focus:      #DFFF3D;
+      --red: #E4574A;
+
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-h) + 12px);
+  }
+  body {
+    margin: 0; background: var(--paper); color: var(--text);
+    font-family: var(--sans); font-size: 16px; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+
+  /* Fokus: kontraststark auf hellem Grund, Signalfarbe auf dunklem Grund */
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .nav :focus-visible,
+  .hero :focus-visible,
+  .net :focus-visible,
+  .leiste :focus-visible,
+  footer :focus-visible { outline-color: var(--signal); }
+
+  .skip {
+    position: absolute; left: var(--s4); top: -100px; z-index: 100;
+    background: var(--signal); color: var(--signal-text);
+    padding: 12px 18px; font-size: 15px; font-weight: 600; text-decoration: none;
+    transition: top .15s;
+  }
+  .skip:focus { top: var(--s3); }
+
+  .shell { max-width: 1240px; margin: 0 auto; padding: 0 var(--s5); }
+  @media (min-width: 900px) { .shell { padding: 0 var(--s7); } }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
+  /* ─────────── Wortmarke ─────────── */
+  .wordmark { position: relative; display: inline-flex; align-items: baseline; font-size: 22px; line-height: 1; text-decoration: none; }
+  .wordmark .w { font-weight: 600; color: #EEF2F4; letter-spacing: -0.015em; }
+  .wordmark .n { font-family: var(--num); font-variant-numeric: tabular-nums; font-weight: 800; color: var(--red-web); letter-spacing: 0.03em; }
+  .wordmark .accent { position: absolute; left: 0; bottom: -0.1em; width: 100%; height: 0.1em; background: var(--signal); }
+  .wordmark .accent::after {
+    content: ""; position: absolute; left: 100%; bottom: 0;
+    width: 1.3em; height: 0.1em; background: var(--signal);
+    transform-origin: left bottom; transform: rotate(-55deg);
+  }
+
+  /* ─────────── Navigation ─────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50; background: var(--ink-deep);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  .nav-in { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); height: var(--nav-h); }
+  .nav-links { display: none; gap: var(--s6); }
+  @media (min-width: 980px) { .nav-links { display: flex; } }
+  .nav-links a {
+    display: inline-flex; align-items: center; min-height: 44px;
+    font-size: 13.5px; font-weight: 500; color: var(--on-dark-soft); text-decoration: none;
+    letter-spacing: 0.01em; border-bottom: 2px solid transparent;
+    transition: color .15s, border-color .15s;
+  }
+  .nav-links a:hover { color: #fff; border-bottom-color: var(--red-web); }
+  .nav-right { display: flex; align-items: center; gap: var(--s3); }
+  .nav-cta {
+    display: inline-flex; align-items: center; min-height: 44px;
+    font-size: 13.5px; font-weight: 600; background: var(--signal); color: var(--signal-text);
+    text-decoration: none; padding: 0 16px; letter-spacing: 0.01em;
+    transition: transform .15s;
+  }
+  .nav-cta:hover { transform: translateY(-1px); }
+
+  .nav-toggle {
+    display: inline-flex; align-items: center; justify-content: center; gap: var(--s2);
+    min-width: 44px; min-height: 44px; padding: 0 12px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; font-family: var(--sans); font-size: 13.5px; font-weight: 500;
+    cursor: pointer;
+  }
+  @media (min-width: 980px) { .nav-toggle { display: none; } }
+  .nav-toggle .bars { display: block; width: 16px; height: 10px; position: relative; }
+  .nav-toggle .bars::before,
+  .nav-toggle .bars::after,
+  .nav-toggle .bars span {
+    content: ""; position: absolute; left: 0; width: 100%; height: 2px; background: currentColor;
+  }
+  .nav-toggle .bars::before { top: 0; }
+  .nav-toggle .bars span { top: 4px; }
+  .nav-toggle .bars::after { top: 8px; }
+
+  .nav-panel { display: none; background: var(--ink-deep); border-top: 1px solid rgba(255,255,255,0.12); }
+  .nav-panel.open { display: block; }
+  @media (min-width: 980px) { .nav-panel, .nav-panel.open { display: none; } }
+  .nav-panel a {
+    display: block; padding: 14px 0; min-height: 44px;
+    color: var(--on-dark-soft); text-decoration: none; font-size: 16px; font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.09);
+  }
+  .nav-panel a:last-child { border-bottom: none; }
+  .nav-panel a:hover { color: #fff; }
+
+
+  /* ─────────── Rechtstextseite ─────────── */
+  .rt-head { background: var(--ink); color: #fff; padding: var(--s8) 0 var(--s7); }
+  .rt-head .kicker {
+    display: inline-flex; align-items: center; gap: var(--s3);
+    font-family: var(--num); font-size: 14px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--mist); margin: 0 0 var(--s4);
+  }
+  .rt-head .kicker::before { content: ""; width: 26px; height: 2px; background: var(--red-web); }
+  .rt-head h1 {
+    font-size: clamp(30px, 5.5vw, 52px); font-weight: 600; letter-spacing: -0.025em;
+    line-height: 1.05; margin: 0; max-width: 20ch;
+    /* Deutsche Komposita wie "Datenschutzerklaerung" sprengen sonst schmale Displays */
+    hyphens: auto; overflow-wrap: break-word;
+  }
+  .rt-head .stand { margin: var(--s4) 0 0; font-size: 14.5px; color: var(--on-dark-mute); }
+
+  .rt { padding: var(--s8) 0 var(--s9); }
+  .rt-in { max-width: 74ch; hyphens: auto; overflow-wrap: break-word; }
+  .rt h2 {
+    hyphens: auto; overflow-wrap: break-word;
+    font-size: clamp(20px, 2.6vw, 25px); font-weight: 600; letter-spacing: -0.015em;
+    color: var(--heading); margin: var(--s8) 0 var(--s4);
+    padding-top: var(--s5); border-top: 1px solid var(--line);
+  }
+  .rt h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+  .rt h3 { font-size: 17px; font-weight: 600; color: var(--heading); margin: var(--s5) 0 var(--s2); }
+  .rt p { font-size: 16.5px; margin: 0 0 var(--s4); }
+  .rt ul { font-size: 16.5px; margin: 0 0 var(--s4); padding-left: 1.25em; }
+  .rt li { margin-bottom: var(--s2); }
+  .rt a { color: var(--red); text-underline-offset: 3px; }
+  .rt a:hover { color: var(--heading); }
+  .rt .adresse { font-style: normal; margin: 0 0 var(--s4); font-size: 16.5px; line-height: 1.75; }
+  .rt .merk {
+    margin: var(--s5) 0; padding: var(--s4) var(--s5);
+    background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--signal);
+  }
+  .rt .merk p:last-child { margin-bottom: 0; }
+  .rt .merk strong { color: var(--heading); }
+
+  .rt-zurueck {
+    display: inline-flex; align-items: center; gap: var(--s2); min-height: 48px;
+    margin-top: var(--s7); padding: 13px 24px; border: 1px solid var(--on-surface);
+    color: var(--on-surface); text-decoration: none; font-size: 15px; font-weight: 600;
+  }
+  .rt-zurueck:hover { background: var(--on-surface); color: var(--paper); }
+
+  footer { background: var(--ink-deep); color: #fff; padding: var(--s7) 0; }
+  .foot-min { display: flex; flex-wrap: wrap; gap: var(--s5); align-items: center; justify-content: space-between; }
+  .foot-min .links { display: flex; flex-wrap: wrap; gap: var(--s5); }
+  .foot-min a { color: #D3E1E9; text-decoration: none; font-size: 14.5px; display: inline-flex; align-items: center; min-height: 44px; }
+  .foot-min a:hover { color: #fff; text-decoration: underline; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#inhalt">Zum Inhalt springen</a>
+
+<nav class="nav">
+  <div class="shell nav-in">
+    <a class="wordmark" href="/" aria-label="depot112 Startseite">
+      <span class="w">depot</span><span class="n">112</span><span class="accent"></span>
+    </a>
+    <div class="nav-right">
+      <a class="nav-cta" href="/#anfrage">Ersatzteil anfragen</a>
+    </div>
+  </div>
+</nav>
+
+<header class="rt-head">
+  <div class="shell">
+    <p class="kicker">Datenschutz</p>
+    <h1>Datenschutzerklärung</h1>
+    <p class="stand">Stand: 7. September 2026</p>
+  </div>
+</header>
+
+<main class="rt" id="inhalt">
+  <div class="shell">
+    <div class="rt-in">
+      <h2>1. Verantwortlicher</h2>
+      <address class="adresse">
+        <strong>Dominik Buchinger</strong><br>
+        Depot112<br>
+        Schönblickstraße 10/1, 75242 Neuhausen<br>
+        Telefon: <a href="tel:+4972349497950">07234 9497950</a><br>
+        E-Mail: <a href="mailto:info@depot-112.de">info@depot-112.de</a>
+      </address>
+
+      <h2>2. Grundsätzliches zu dieser Website</h2>
+      <p>Diese Website setzt <strong>keine Cookies</strong>, bindet <strong>kein
+      Tracking und keine Analysedienste</strong> ein und enthält keine eingebetteten
+      Social-Media-Inhalte. Die Verweise auf unsere Profile bei Instagram, Facebook und
+      LinkedIn sind gewöhnliche Links; ein Datenabfluss entsteht erst, wenn ihr sie
+      anklickt.</p>
+      <div class="merk">
+        <p><strong>Deshalb gibt es hier keinen Cookiebanner.</strong> Ein Banner ohne
+        einwilligungspflichtige Dienste wäre nur eine überflüssige Hürde vor dem
+        Anfrageformular.</p>
+      </div>
+
+      <h2>3. Hosting und Server-Logfiles</h2>
+      <p>Diese Website wird bei GitHub Pages gehostet, einem Dienst der GitHub, Inc.,
+      88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA. Beim Aufruf der Seite
+      verarbeitet GitHub automatisch Verbindungsdaten, insbesondere IP-Adresse, Datum und
+      Uhrzeit, aufgerufene Datei, übertragene Datenmenge, Referrer und Browserkennung.</p>
+      <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Das berechtigte Interesse besteht
+      in der technisch fehlerfreien Bereitstellung und der Sicherheit der Website.</p>
+      <p>GitHub verarbeitet Daten auch in den USA. GitHub ist unter dem EU-US Data Privacy
+      Framework zertifiziert und stützt die Übermittlung zusätzlich auf die
+      Standardvertragsklauseln der EU-Kommission.</p>
+
+      <h2>4. Schriftarten</h2>
+      <p>Diese Website lädt Schriftarten von Servern der Google Ireland Limited,
+      Gordon House, Barrow Street, Dublin 4, Irland. Dabei wird eure IP-Adresse an Google
+      übertragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO, berechtigtes Interesse
+      ist die einheitliche Darstellung der Website.</p>
+
+      <h2>5. Anfrageformular und Kontaktaufnahme</h2>
+      <p>Über das Anfrageformular könnt ihr uns eine Ersatzteilanfrage übermitteln.
+      Verarbeitet werden die von euch eingegebenen Angaben: gesuchtes Teil, Organisation
+      und E-Mail-Adresse als Pflichtangaben sowie freiwillig Telefonnummer,
+      Ansprechpartner, Dringlichkeit, Teilenummer, Fahrzeugtyp, Baujahr, Fahrgestell- und
+      Aufbau-Hersteller und weitere Hinweise.</p>
+      <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, soweit die Verarbeitung der
+      Anbahnung oder Durchführung eines Vertrags dient, im Übrigen Art. 6 Abs. 1 lit. f
+      DSGVO zur Bearbeitung eurer Anfrage. Schreibt ihr uns unmittelbar eine E-Mail,
+      verarbeiten wir die darin enthaltenen Angaben zum selben Zweck und auf derselben
+      Rechtsgrundlage.</p>
+      <h3>Schutz vor automatisierten Einsendungen</h3>
+      <p>Das Formular enthält ein für Menschen unsichtbares Zusatzfeld, das nur
+      automatisierte Skripte ausfüllen, und wertet die Zeitspanne zwischen Aufruf und
+      Absenden aus. Beide Werte dienen ausschließlich der Spamabwehr, werden nicht
+      gespeichert und nicht zur Profilbildung verwendet.</p>
+
+      <h2>6. Übermittlung des Formulars über Cloudflare</h2>
+      <p>Das Absenden des Formulars läuft über einen von uns betriebenen Endpunkt bei der
+      Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA. Cloudflare
+      verarbeitet dabei die Formularinhalte sowie Verbindungsdaten einschließlich der
+      IP-Adresse, um die Übermittlung technisch durchzuführen und automatisierte
+      Einsendungen abzuwehren. Eine dauerhafte Speicherung der Anfrage bei Cloudflare
+      findet nicht statt.</p>
+      <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b und lit. f DSGVO. Cloudflare ist unter
+      dem EU-US Data Privacy Framework zertifiziert und stützt die Übermittlung zusätzlich
+      auf die Standardvertragsklauseln der EU-Kommission.</p>
+
+      <h2>7. Weitergabe an Netzwerkpartner</h2>
+      <p>Zur Bearbeitung einer Teileanfrage fragen wir mögliche Anbieter an, etwa
+      Kfz-Verwerter, Nutzfahrzeug- und Spezialhändler, Werkstätten, Aufbau-Werkstätten,
+      andere BOS-Organisationen oder Sammler.</p>
+      <div class="merk">
+        <p><strong>Bei dieser Suche geben wir keine personenbezogenen Daten weiter.</strong>
+        Wir übermitteln ausschließlich die technischen Angaben, die zur Identifikation des
+        Teils erforderlich sind: Bezeichnung des gesuchten Teils, gegebenenfalls
+        Teilenummer, Fahrzeugtyp, Baujahr sowie Fahrgestell- und Aufbau-Hersteller. Weder
+        euer Name noch der eurer Organisation, noch E-Mail-Adresse oder Telefonnummer
+        werden dabei genannt.</p>
+        <p>Finden wir ein passendes Teil, stellen wir es euch mit dem konkreten Anbieter
+        vor. <strong>Erst wenn ihr uns dafür eine Freigabe erteilt</strong>, stellen wir
+        den direkten Kontakt her und übermitteln die dafür erforderlichen Kontaktdaten.
+        Ohne eure Freigabe erfährt kein Anbieter, von wem die Anfrage stammt.</p>
+      </div>
+      <p>Rechtsgrundlage für die anonymisierte Suche ist Art. 6 Abs. 1 lit. b DSGVO
+      (Durchführung vorvertraglicher Maßnahmen auf eure Anfrage hin). Rechtsgrundlage für
+      die anschließende Übermittlung eurer Kontaktdaten an den ausgewählten Anbieter ist
+      eure Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO, die ihr jederzeit mit Wirkung für
+      die Zukunft widerrufen könnt.</p>
+
+      <h2>8. Speicherung der Anfragen</h2>
+      <p>Anfragen werden in einer Datenbank bei Airtable verwaltet, einem Dienst der
+      Formagrid, Inc., 155 5th St, San Francisco, CA 94103, USA. Das gilt sowohl für
+      Anfragen über das Formular als auch für telefonisch oder per E-Mail eingegangene
+      Anfragen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b und lit. f DSGVO.</p>
+      <p>Airtable verarbeitet Daten in den USA. Die Übermittlung stützt sich auf die
+      Standardvertragsklauseln der EU-Kommission, die Bestandteil des mit Airtable
+      geschlossenen Auftragsverarbeitungsvertrags sind.</p>
+
+      <h2>9. E-Mail-Postfach</h2>
+      <p>Unsere E-Mail-Postfächer werden von der IONOS SE, Elgendorfer Str. 57,
+      56410 Montabaur, Deutschland betrieben. Die Verarbeitung findet innerhalb der
+      Europäischen Union statt, eine Übermittlung in ein Drittland erfolgt nicht.
+      Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.</p>
+
+      <h2>10. Speicherdauer</h2>
+      <ul>
+        <li>Anfragen, die zu keiner Vermittlung geführt haben: 24 Monate ab Eingang,
+        danach Löschung.</li>
+        <li>Anfragen mit erfolgter Vermittlung: für die Dauer der gesetzlichen
+        Aufbewahrungsfristen, handels- und steuerrechtlich in der Regel sechs
+        beziehungsweise zehn Jahre.</li>
+      </ul>
+
+      <h2>11. Eure Rechte</h2>
+      <p>Ihr habt jederzeit das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung
+      (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und
+      Datenübertragbarkeit (Art. 20). Erteilte Einwilligungen könnt ihr nach
+      Art. 7 Abs. 3 DSGVO jederzeit mit Wirkung für die Zukunft widerrufen.</p>
+      <div class="merk">
+        <p><strong>Widerspruchsrecht nach Art. 21 DSGVO:</strong> Soweit wir Daten auf
+        Grundlage berechtigter Interessen nach Art. 6 Abs. 1 lit. f DSGVO verarbeiten,
+        habt ihr das Recht, aus Gründen, die sich aus eurer besonderen Situation ergeben,
+        jederzeit Widerspruch einzulegen. Wir verarbeiten die Daten dann nicht mehr, es sei
+        denn, wir können zwingende schutzwürdige Gründe nachweisen.</p>
+      </div>
+      <p>Für die Ausübung genügt eine formlose Nachricht an
+      <a href="mailto:info@depot-112.de">info@depot-112.de</a>.</p>
+
+      <h2>12. Beschwerderecht bei der Aufsichtsbehörde</h2>
+      <p>Unbeschadet anderer Rechtsbehelfe habt ihr nach Art. 77 DSGVO das Recht, euch bei
+      einer Aufsichtsbehörde zu beschweren. Für uns zuständig ist:</p>
+      <address class="adresse">
+        Der Landesbeauftragte für den Datenschutz und die Informationsfreiheit
+        Baden-Württemberg<br>
+        Lautenschlagerstraße 20<br>
+        70173 Stuttgart
+      </address>
+
+
+      <a class="rt-zurueck" href="/">Zurück zur Startseite</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="shell foot-min">
+    <a class="wordmark" href="/" style="font-size:22px;"><span class="w">depot</span><span class="n">112</span><span class="accent"></span></a>
+    <div class="links">
+      <a href="/">Startseite</a>
+      <a href="/impressum.html">Impressum</a>
+      <a href="/datenschutz.html">Datenschutz</a>
+      <a href="mailto:info@depot-112.de">info@depot-112.de</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
