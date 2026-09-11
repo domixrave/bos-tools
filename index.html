@@ -209,23 +209,30 @@
   @media (min-width: 900px) { .radar { max-width: 600px; } }
   .radar svg { width: 100%; height: 100%; display: block; }
 
-  /* Bewegung läuft kurz an und bleibt dann stehen — keine Dauerschleife */
-  .sweep { transform-origin: 350px 350px; animation: sweep 6s linear 2 forwards; }
+  /* Der Radar dreht durchgehend, solange er im Sichtfeld ist. Ausserhalb
+     wird er per data-ruhend angehalten und laeuft spaeter dort weiter, wo er
+     stehen geblieben ist — kein Ruckeln, keine Rechenlast im Hintergrund.
+     Die Keyframes enden auf ihrem Startwert, damit der Rundenwechsel nicht springt. */
+  .sweep { transform-origin: 350px 350px; animation: sweep 6s linear infinite; }
   @keyframes sweep { to { transform: rotate(360deg); } }
-  .blip { animation: blip 6s linear 2 forwards; }
+  .blip { animation: blip 6s linear infinite; }
   @keyframes blip {
     0%, 24% { opacity: 0.25; r: 4; }
     28%     { opacity: 1;    r: 8; }
     46%     { opacity: 0.9;  r: 5; }
-    100%    { opacity: 1;    r: 6; }
+    70%     { opacity: 0.55; r: 4.5; }
+    100%    { opacity: 0.25; r: 4; }
   }
-  .blip-ring { animation: blipRing 6s linear 2 forwards; transform-origin: 452px 228px; }
+  .blip-ring { animation: blipRing 6s linear infinite; transform-origin: 452px 228px; }
   @keyframes blipRing {
     0%, 25%  { opacity: 0; transform: scale(0.3); }
     30%      { opacity: 0.85; transform: scale(1); }
     48%      { opacity: 0; transform: scale(1.9); }
     100%     { opacity: 0; transform: scale(1.9); }
   }
+  .radar[data-ruhend="true"] .sweep,
+  .radar[data-ruhend="true"] .blip,
+  .radar[data-ruhend="true"] .blip-ring { animation-play-state: paused; }
 
   .hero-copy { position: relative; }
 
@@ -1134,6 +1141,19 @@
 <script>
 (function () {
   'use strict';
+
+  /* ── Radar nur laufen lassen, wenn er zu sehen ist ──
+     Ohne IntersectionObserver laeuft die CSS-Animation einfach durch;
+     das ist der harmlosere Ausfall als ein stehender Radar. */
+  var radar = document.querySelector('.radar');
+  if (radar && 'IntersectionObserver' in window) {
+    radar.setAttribute('data-ruhend', 'true');
+    new IntersectionObserver(function (eintraege) {
+      for (var i = 0; i < eintraege.length; i++) {
+        radar.setAttribute('data-ruhend', eintraege[i].isIntersecting ? 'false' : 'true');
+      }
+    }, { threshold: 0.15 }).observe(radar);
+  }
 
   /* ── Mobile Navigation ── */
   var toggle = document.getElementById('navtoggle');
